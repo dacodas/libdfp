@@ -180,6 +180,35 @@ public:
 
 namespace std
 {
+
+  template<typename _CharT, typename _Traits>
+    template<typename _ValueT>
+      basic_istream<_CharT, _Traits>&
+      basic_istream<_CharT, _Traits>::
+      _M_extract(_ValueT& __v)
+      {
+        sentry __cerb(*this, false);
+        if (__cerb)
+          {
+            ios_base::iostate __err = ios_base::goodbit;
+            __try
+              {
+                const __num_get_type& __ng = __check_facet(this->_M_num_get);
+                __ng.get(*this, 0, *this, __err, __v);
+              }
+            __catch(__cxxabiv1::__forced_unwind&)
+              {
+                this->_M_setstate(ios_base::badbit);
+                __throw_exception_again;
+              }
+            __catch(...)
+              { this->_M_setstate(ios_base::badbit); }
+            if (__err)
+              this->setstate(__err);
+          }
+        return *this;
+      }
+
 namespace decimal
 {
   //ISO/IEC TR 24733 - 3.2.11 Formatted output:
@@ -209,17 +238,10 @@ namespace decimal
     }
 
 //  ISO/IEC TR 27433 - 3.2.11 Formatted input:
-
   template <class charT, class traits>
     inline std::basic_istream<charT, traits> &
       operator>>(std::basic_istream<charT, traits> & is, decimal32 & d)
-      {
-	char buf[CHAR_MAX];
-	memset(buf, '\0', CHAR_MAX);
-	is.read(buf,CHAR_MAX);
-	d.__setval(strtod32(buf, NULL));
-	return is;
-      }
+      { return _M_extract(d); }
 
   template <class charT, class traits>
     inline std::basic_istream<charT, traits> &
