@@ -187,7 +187,7 @@ namespace std
 		   const __c_locale& __cloc) throw()
     {
       char* __sanity;
-      __v = __strtof_l(__s, &__sanity, __cloc);
+      __v = __strtod32_l(__s, &__sanity, __cloc);
 
       // _GLIBCXX_RESOLVE_LIB_DEFECTS
       // 23. Num_get overflow result.
