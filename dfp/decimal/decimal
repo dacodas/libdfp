@@ -205,7 +205,7 @@ namespace std
     {
       string __xtrc;
       __xtrc.reserve(32);
-      __beg = _M_extract_float(__beg, __end, __io, __err, __xtrc);
+      __beg = this->_M_extract_float(__beg, __end, __io, __err, __xtrc);
       std::__convert_to_v(__xtrc.c_str(), __v, __err, locale::facet::_S_get_c_locale());
       if (__beg == __end)
         __err |= ios_base::eofbit;
