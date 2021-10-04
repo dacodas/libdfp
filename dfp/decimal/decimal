@@ -181,6 +181,21 @@ public:
 namespace std
 {
 
+  template<typename _CharT, typename _InIter>
+    _InIter
+    num_get<_CharT, _InIter>::
+    do_get(iter_type __beg, iter_type __end, ios_base& __io,
+           ios_base::iostate& __err, float& __v) const
+    {
+      string __xtrc;
+      __xtrc.reserve(32);
+      __beg = _M_extract_float(__beg, __end, __io, __err, __xtrc);
+      std::__convert_to_v(__xtrc.c_str(), __v, __err, _S_get_c_locale());
+      if (__beg == __end)
+        __err |= ios_base::eofbit;
+      return __beg;
+    }
+
   template<>
     template<>
       basic_istream<char, char_traits<char>>&
