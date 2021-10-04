@@ -226,25 +226,7 @@ namespace std
       const _Save_errno __save_errno;
 #endif
 
-#ifdef _GLIBCXX_HAVE_STRTOF
-      __v = strtof(__s, &__sanity);
-#else
-      double __d = strtod(__s, &__sanity);
-      __v = static_cast<decimal::decimal32>(__d);
-#ifdef _GLIBCXX_HAVE_FINITEF
-      if (!finitef (__v))
-	__overflow = true;
-#elif defined (_GLIBCXX_HAVE_FINITE)
-      if (!finite (static_cast<double> (__v)))
-	__overflow = true;
-#elif defined (_GLIBCXX_HAVE_ISINF)
-      if (isinf (static_cast<double> (__v)))
-	__overflow = true;
-#else
-      if (fabs(__d) > numeric_limits<decimal::decimal32>::max())
-	__overflow = true;
-#endif
-#endif // _GLIBCXX_HAVE_STRTOF
+      __v = strtod32(__s, &__sanity);
 
       // _GLIBCXX_RESOLVE_LIB_DEFECTS
       // 23. Num_get overflow result.
