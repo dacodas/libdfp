@@ -181,6 +181,34 @@ public:
 namespace std
 {
 
+  template<>
+    void
+    __convert_to_v(const char* __s, float& __v, ios_base::iostate& __err,
+		   const __c_locale& __cloc) throw()
+    {
+      char* __sanity;
+      __v = __strtof_l(__s, &__sanity, __cloc);
+
+      // _GLIBCXX_RESOLVE_LIB_DEFECTS
+      // 23. Num_get overflow result.
+      if (__sanity == __s || *__sanity != '\0')
+	{
+	  __v = 0.0f;
+	  __err = ios_base::failbit;
+	}
+      else if (__v == numeric_limits<float>::infinity())
+	{
+	  __v = numeric_limits<float>::max();
+	  __err = ios_base::failbit;
+	}
+      else if (__v == -numeric_limits<float>::infinity())
+	{
+	  __v = -numeric_limits<float>::max();
+	  __err = ios_base::failbit;
+	}
+    }
+
+
   template<typename _CharT, typename _InIter = std::istreambuf_iterator<_CharT>>
   class dfp_num_get : public num_get<_CharT, _InIter> {
       typedef _InIter iter_type;
