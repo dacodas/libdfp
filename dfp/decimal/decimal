@@ -209,7 +209,7 @@ namespace std
 
   template<>
     void
-    __convert_to_v(const char* __s, float& __v, ios_base::iostate& __err,
+    __convert_to_v(const char* __s, decimal::decimal32& __v, ios_base::iostate& __err,
 		   const __c_locale&) throw()
     {
       // Assumes __s formatted for "C" locale.
@@ -230,7 +230,7 @@ namespace std
       __v = strtof(__s, &__sanity);
 #else
       double __d = strtod(__s, &__sanity);
-      __v = static_cast<float>(__d);
+      __v = static_cast<decimal::decimal32>(__d);
 #ifdef _GLIBCXX_HAVE_FINITEF
       if (!finitef (__v))
 	__overflow = true;
@@ -241,7 +241,7 @@ namespace std
       if (isinf (static_cast<double> (__v)))
 	__overflow = true;
 #else
-      if (fabs(__d) > numeric_limits<float>::max())
+      if (fabs(__d) > numeric_limits<decimal::decimal32>::max())
 	__overflow = true;
 #endif
 #endif // _GLIBCXX_HAVE_STRTOF
@@ -255,17 +255,17 @@ namespace std
 	}
       else if (__overflow
 #if __FLT_HAS_INFINITY__
-	       || __v == numeric_limits<float>::infinity()
-	       || __v == -numeric_limits<float>::infinity()
+	       || __v == numeric_limits<decimal::decimal32>::infinity()
+	       || __v == -numeric_limits<decimal::decimal32>::infinity()
 #else
 	       || ((__v > 1.0f || __v < -1.0f) && errno == ERANGE)
 #endif
 	      )
 	{
 	  if (__v > 0.0f)
-	    __v = numeric_limits<float>::max();
+	    __v = numeric_limits<decimal::decimal32>::max();
 	  else
-	    __v = -numeric_limits<float>::max();
+	    __v = -numeric_limits<decimal::decimal32>::max();
 	  __err = ios_base::failbit;
 	}
 
