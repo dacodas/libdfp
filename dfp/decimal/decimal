@@ -273,7 +273,7 @@ namespace decimal
   template <class charT, class traits>
     inline std::basic_istream<charT, traits> &
       operator>>(std::basic_istream<charT, traits> & is, decimal32 & d)
-      { return _M_extract(d); }
+      { return is._M_extract(d); }
 
   template <class charT, class traits>
     inline std::basic_istream<charT, traits> &
