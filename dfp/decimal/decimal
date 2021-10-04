@@ -237,9 +237,9 @@ namespace std
 	      )
 	{
 	  if (__v > 0.0f)
-	    __v = numeric_limits<decimal::decimal32>::max();
+	    __v = DEC32_MAX;
 	  else
-	    __v = -numeric_limits<decimal::decimal32>::max();
+	    __v = -DEC32_MAX;
 	  __err = ios_base::failbit;
 	}
 
