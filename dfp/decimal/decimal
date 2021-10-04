@@ -228,7 +228,7 @@ namespace std
       // 23. Num_get overflow result.
       if (__sanity == __s || *__sanity != '\0')
 	{
-	  __v = 0.0f;
+	  __v = 0.0df;
 	  __err = ios_base::failbit;
 	}
       else if (__overflow
@@ -236,7 +236,7 @@ namespace std
 	       || __v == decimal::decimal32 {-__builtin_infd32()}
 	      )
 	{
-	  if (__v > 0.0f)
+	  if (__v > decimal::decimal32 {0.0df})
 	    __v = DEC32_MAX;
 	  else
 	    __v = -DEC32_MAX;
