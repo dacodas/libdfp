@@ -224,8 +224,9 @@ namespace std
             ios_base::iostate __err = ios_base::goodbit;
             __try
               {
-                const __num_get_type& __ng = __check_facet(this->_M_num_get);
-                __ng.get(*this, 0, *this, __err, __v);
+                locale dfp_locale {_M_ios_locale, new dfp_num_get<char>()};
+                auto& facet {use_facet<dfp_num_get<char>>(dfp_locale)};
+                facet.get(*this, 0, *this, __err, __v);
               }
             __catch(__cxxabiv1::__forced_unwind&)
               {
