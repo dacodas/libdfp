@@ -181,11 +181,11 @@ public:
 namespace std
 {
 
-  template<typename _CharT, typename _Traits>
-    template<typename _ValueT>
-      basic_istream<_CharT, _Traits>&
-      basic_istream<_CharT, _Traits>::
-      _M_extract(_ValueT& __v)
+  template<>
+    template<>
+      basic_istream<char, char_traits<char>>&
+      basic_istream<char, char_traits<char>>::
+      _M_extract(decimal::decimal32& __v)
       {
         sentry __cerb(*this, false);
         if (__cerb)
