@@ -183,7 +183,7 @@ namespace std
 
   template<>
     void
-    __convert_to_v(const char* __s, float& __v, ios_base::iostate& __err,
+    __convert_to_v(const char* __s, decimal::decimal32& __v, ios_base::iostate& __err,
 		   const __c_locale& __cloc) throw()
     {
       char* __sanity;
@@ -196,14 +196,14 @@ namespace std
 	  __v = 0.0f;
 	  __err = ios_base::failbit;
 	}
-      else if (__v == numeric_limits<float>::infinity())
+      else if (__v == numeric_limits<decimal::decimal32>::infinity())
 	{
-	  __v = numeric_limits<float>::max();
+	  __v = numeric_limits<decimal::decimal32>::max();
 	  __err = ios_base::failbit;
 	}
-      else if (__v == -numeric_limits<float>::infinity())
+      else if (__v == -numeric_limits<decimal::decimal32>::infinity())
 	{
-	  __v = -numeric_limits<float>::max();
+	  __v = -numeric_limits<decimal::decimal32>::max();
 	  __err = ios_base::failbit;
 	}
     }
