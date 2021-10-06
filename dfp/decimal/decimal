@@ -328,6 +328,10 @@ namespace std
     friend dfp_basic_istream<X, Y> &
       decimal::operator>>(dfp_basic_istream<X, Y> & is, decimal::decimal32 & d);
 
+    template<class X, class Y>
+    friend basic_istream<X, Y> &
+      decimal::operator>>(basic_istream<X, Y> & is, decimal::decimal32 & d);
+
     dfp_basic_istream<charT, traits> &
     _M_extract(decimal::decimal32& d)
     {
@@ -371,6 +375,21 @@ namespace decimal
     inline std::dfp_basic_istream<charT, traits> &
       operator>>(std::dfp_basic_istream<charT, traits> & is, decimal32 & d)
       { return is._M_extract(d); }
+
+  template <class charT, class traits>
+    inline std::basic_istream<charT, traits> &
+      operator>>(std::basic_istream<charT, traits> & is, decimal32 & d)
+      {
+        auto& dfpIstream {
+          static_cast<
+            dfp_basic_istream<charT, traits>&
+          >(is)
+        };
+
+        dfpIstream._M_extract(d);
+
+        return is;
+      }
 
   template <class charT, class traits>
     inline std::basic_istream<charT, traits> &
