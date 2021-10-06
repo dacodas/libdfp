@@ -308,6 +308,34 @@ namespace std
         return *this;
       }
 
+  template <class charT, class traits = char_traits<charT>>
+  class dfp_basic_istream;
+
+  namespace decimal
+  {
+    template <class charT, class traits>
+    std::dfp_basic_istream<charT, traits> &
+      operator>>(std::dfp_basic_istream<charT, traits> & is, decimal32 & d);
+  }
+
+  template <class charT, class traits>
+  class dfp_basic_istream : public basic_istream<charT, traits>
+  {
+
+    template<class X, class Y>
+    friend dfp_basic_istream<X, Y> &
+      decimal::operator>>(dfp_basic_istream<X, Y> & is, decimal::decimal32 & d);
+
+    dfp_basic_istream<charT, traits> &
+    _M_extract(decimal::decimal32& d)
+    {
+      return
+        static_cast< dfp_basic_istream<charT, traits>& >(
+          basic_istream<charT, traits>::_M_extract(d)
+        );
+    }
+  };
+
 namespace decimal
 {
   //ISO/IEC TR 24733 - 3.2.11 Formatted output:
@@ -338,8 +366,8 @@ namespace decimal
 
 //  ISO/IEC TR 27433 - 3.2.11 Formatted input:
   template <class charT, class traits>
-    inline std::basic_istream<charT, traits> &
-      operator>>(std::basic_istream<charT, traits> & is, decimal32 & d)
+    inline std::dfp_basic_istream<charT, traits> &
+      operator>>(std::dfp_basic_istream<charT, traits> & is, decimal32 & d)
       { return is._M_extract(d); }
 
   template <class charT, class traits>
