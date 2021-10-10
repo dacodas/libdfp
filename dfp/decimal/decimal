@@ -279,8 +279,6 @@ namespace std
       return __beg;
     }
 
-  template class std::num_get<char, std::istreambuf_iterator<char, std::char_traits<char>>>;
-
   template<>
     template<>
       basic_istream<char, char_traits<char>>&
