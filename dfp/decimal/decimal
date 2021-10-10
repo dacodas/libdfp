@@ -422,9 +422,9 @@ namespace std
     friend dfp_basic_istream<X, Y> &
       decimal::operator>>(dfp_basic_istream<X, Y> & is, decimal::decimal32 & d);
 
-    template<class X, class Y>
+    template<class X, class Y, class T>
     friend basic_istream<X, Y> &
-      decimal::operator>>(basic_istream<X, Y> & is, decimal::decimal32 & d);
+      decimal::operator>>(basic_istream<X, Y> & is, T & d);
 
     template<typename _ValueT>
     dfp_basic_istream<charT, traits> &
