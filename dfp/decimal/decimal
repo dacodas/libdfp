@@ -504,10 +504,18 @@ namespace decimal
       operator>>(std::dfp_basic_istream<charT, traits> & is, decimal128 & d)
       { return is._M_extract(d); }
 
-  template <class charT, class traits>
+  template <class charT, class traits, class T>
     inline std::basic_istream<charT, traits> &
-      operator>>(std::basic_istream<charT, traits> & is, decimal32 & d)
+      operator>>(std::basic_istream<charT, traits> & is, T & d)
       {
+        static_assert(
+            std::is_same<T, decimal::decimal32>::value
+              || std::is_same<T, decimal::decimal64>::value
+              || std::is_same<T, decimal::decimal128>::value,
+            "This template function is only meant to be used with "
+            "decimal floating point types"
+        );
+
         auto& dfpIstream {
           static_cast<
             dfp_basic_istream<charT, traits>&
@@ -517,28 +525,6 @@ namespace decimal
         dfpIstream._M_extract(d);
 
         return is;
-      }
-
-  template <class charT, class traits>
-    inline std::basic_istream<charT, traits> &
-      operator>>(std::basic_istream<charT, traits> & is, decimal64 & d)
-      {
-	char buf[CHAR_MAX];
-	memset(buf, '\0', CHAR_MAX);
-	is.read(buf,CHAR_MAX);
-	d.__setval(strtod64(buf, NULL));
-	return is;
-      }
-
-  template <class charT, class traits>
-    inline std::basic_istream<charT, traits> &
-      operator>>(std::basic_istream<charT, traits> & is, decimal128 & d)
-      {
-	char buf[CHAR_MAX];
-	memset(buf, '\0', CHAR_MAX);
-	is.read(buf,CHAR_MAX);
-	d.__setval(strtod128(buf, NULL));
-	return is;
       }
 
 } /* namespace decimal  */
