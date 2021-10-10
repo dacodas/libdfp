@@ -279,34 +279,6 @@ namespace std
       return __beg;
     }
 
-  template<>
-    template<>
-      basic_istream<char, char_traits<char>>&
-      basic_istream<char, char_traits<char>>::
-      _M_extract(decimal::decimal32& __v)
-      {
-        sentry __cerb(*this, false);
-        if (__cerb)
-          {
-            ios_base::iostate __err = ios_base::goodbit;
-            __try
-              {
-                locale dfp_locale {_M_ios_locale, new dfp_num_get<char>()};
-                auto& facet {use_facet<dfp_num_get<char>>(dfp_locale)};
-                facet.get(*this, 0, *this, __err, __v);
-              }
-            __catch(__cxxabiv1::__forced_unwind&)
-              {
-                this->_M_setstate(ios_base::badbit);
-                __throw_exception_again;
-              }
-            __catch(...)
-              { this->_M_setstate(ios_base::badbit); }
-            if (__err)
-              this->setstate(__err);
-          }
-        return *this;
-      }
 
   template <class charT, class traits = char_traits<charT>>
   class dfp_basic_istream;
@@ -330,15 +302,39 @@ namespace std
     friend basic_istream<X, Y> &
       decimal::operator>>(basic_istream<X, Y> & is, decimal::decimal32 & d);
 
+    template<typename _ValueT>
     dfp_basic_istream<charT, traits> &
-    _M_extract(decimal::decimal32& d)
-    {
-      return
-        static_cast< dfp_basic_istream<charT, traits>& >(
-          basic_istream<charT, traits>::_M_extract(d)
-        );
-    }
+    _M_extract(_ValueT& d);
   };
+
+  template<typename _CharT, typename _Traits>
+    template<typename _ValueT>
+      dfp_basic_istream<_CharT, _Traits>&
+      dfp_basic_istream<_CharT, _Traits>::
+      _M_extract(_ValueT& __v)
+      {
+        typename basic_istream<_CharT, _Traits>::sentry __cerb(*this, false);
+        if (__cerb)
+          {
+            ios_base::iostate __err = ios_base::goodbit;
+            __try
+              {
+                locale dfp_locale {this->_M_ios_locale, new dfp_num_get<_CharT>()};
+                auto& facet {use_facet<dfp_num_get<_CharT>>(dfp_locale)};
+                facet.get(*this, 0, *this, __err, __v);
+              }
+            __catch(__cxxabiv1::__forced_unwind&)
+              {
+                this->_M_setstate(ios_base::badbit);
+                __throw_exception_again;
+              }
+            __catch(...)
+              { this->_M_setstate(ios_base::badbit); }
+            if (__err)
+              this->setstate(__err);
+          }
+        return *this;
+      }
 
 namespace decimal
 {
