@@ -247,6 +247,83 @@ namespace std
       delete [] __sav;
     }
 
+  template<>
+    void
+    __convert_to_v(const char* __s, decimal::decimal64& __v, ios_base::iostate& __err,
+		   const __c_locale&) throw()
+    {
+      // Assumes __s formatted for "C" locale.
+      const char* __sav = __set_C_locale();
+      if (!__sav)
+	{
+	  __err = ios_base::failbit;
+	  return;
+	}
+      char* __sanity;
+
+      __v = strtod64(__s, &__sanity);
+
+      // _GLIBCXX_RESOLVE_LIB_DEFECTS
+      // 23. Num_get overflow result.
+      if (__sanity == __s || *__sanity != '\0')
+	{
+	  __v = decimal::decimal64 {0.0dd};
+	  __err = ios_base::failbit;
+	}
+      else if (
+	       __v == decimal::decimal64 {__builtin_infd64()}
+	       || __v == decimal::decimal64 {-__builtin_infd64()} )
+	{
+	  if (__v > decimal::decimal64 {0.0dd})
+	    __v = DEC64_MAX;
+	  else
+	    __v = -DEC64_MAX;
+	  __err = ios_base::failbit;
+	}
+
+      setlocale(LC_ALL, __sav);
+      delete [] __sav;
+    }
+
+  template<>
+    void
+    __convert_to_v(const char* __s, decimal::decimal128& __v,
+		   ios_base::iostate& __err, const __c_locale&) throw()
+    {
+      // Assumes __s formatted for "C" locale.
+      const char* __sav = __set_C_locale();
+      if (!__sav)
+	{
+	  __err = ios_base::failbit;
+	  return;
+	}
+
+      char* __sanity;
+      __v = strtod128(__s, &__sanity);
+
+      // _GLIBCXX_RESOLVE_LIB_DEFECTS
+      // 23. Num_get overflow result.
+      if (__sanity == __s || *__sanity != '\0')
+	{
+	  __v = decimal::decimal128 {0.0dl};
+	  __err = ios_base::failbit;
+	}
+       else if (
+	  __v == decimal::decimal128 {__builtin_infd128()}
+	  || __v == decimal::decimal128 {-__builtin_infd128()} )
+	{
+	  if (__v > decimal::decimal128 {0.0dl})
+	    __v = DEC128_MAX;
+	  else
+	    __v = -DEC128_MAX;
+	  __err = ios_base::failbit;
+	}
+
+      setlocale(LC_ALL, __sav);
+      delete [] __sav;
+    }
+
+
 
   template<typename _CharT, typename _InIter = std::istreambuf_iterator<_CharT>>
   class dfp_num_get : public num_get<_CharT, _InIter> {
@@ -257,10 +334,28 @@ namespace std
       do_get(iter_type, iter_type, ios_base&, ios_base::iostate&,
         decimal::decimal32&) const;
 
+      virtual iter_type
+      do_get(iter_type, iter_type, ios_base&, ios_base::iostate&,
+        decimal::decimal64&) const;
+
+      virtual iter_type
+      do_get(iter_type, iter_type, ios_base&, ios_base::iostate&,
+        decimal::decimal128&) const;
+
   public:
       iter_type
       get(iter_type in, iter_type end, ios_base& io,
      ios_base::iostate& err, decimal::decimal32& v) const
+      { return this->do_get(in, end, io, err, v); }
+
+      iter_type
+      get(iter_type in, iter_type end, ios_base& io,
+          ios_base::iostate& err, decimal::decimal64& v) const
+      { return this->do_get(in, end, io, err, v); }
+
+      iter_type
+      get(iter_type in, iter_type end, ios_base& io,
+          ios_base::iostate& err, decimal::decimal128& v) const
       { return this->do_get(in, end, io, err, v); }
   };
 
@@ -279,6 +374,35 @@ namespace std
       return __beg;
     }
 
+  template<typename _CharT, typename _InIter>
+    _InIter
+    dfp_num_get<_CharT, _InIter>::
+    do_get(iter_type __beg, iter_type __end, ios_base& __io,
+           ios_base::iostate& __err, decimal::decimal64& __v) const
+    {
+      string __xtrc;
+      __xtrc.reserve(32);
+      __beg = this->_M_extract_float(__beg, __end, __io, __err, __xtrc);
+      std::__convert_to_v(__xtrc.c_str(), __v, __err, locale::facet::_S_get_c_locale());
+      if (__beg == __end)
+        __err |= ios_base::eofbit;
+      return __beg;
+    }
+
+  template<typename _CharT, typename _InIter>
+    _InIter
+    dfp_num_get<_CharT, _InIter>::
+    do_get(iter_type __beg, iter_type __end, ios_base& __io,
+           ios_base::iostate& __err, decimal::decimal128& __v) const
+    {
+      string __xtrc;
+      __xtrc.reserve(32);
+      __beg = this->_M_extract_float(__beg, __end, __io, __err, __xtrc);
+      std::__convert_to_v(__xtrc.c_str(), __v, __err, locale::facet::_S_get_c_locale());
+      if (__beg == __end)
+        __err |= ios_base::eofbit;
+      return __beg;
+    }
 
   template <class charT, class traits = char_traits<charT>>
   class dfp_basic_istream;
