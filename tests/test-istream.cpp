@@ -39,6 +39,8 @@
 
 #include <math.h>
 
+template class std::num_get<char, std::istreambuf_iterator<char, std::char_traits<char>>>;
+
 using namespace std;
 using namespace std::decimal;
 
